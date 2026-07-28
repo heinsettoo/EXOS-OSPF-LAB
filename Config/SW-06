@@ -1,0 +1,56 @@
+SW-06
+configure snmp sysName "STUB"
+configure sys-recovery-level switch reset
+
+#
+# Module vlan configuration.
+#
+configure vlan default delete ports all
+configure vr VR-Default delete ports 1-5
+create qosprofile "QP2"
+create qosprofile "QP3"
+create qosprofile "QP4"
+create qosprofile "QP5"
+create qosprofile "QP6"
+create qosprofile "QP7"
+create vlan "LOOPBACK"
+enable loopback-mode vlan LOOPBACK
+create vlan "NET-1"
+enable loopback-mode vlan NET-1
+create vlan "NET-2"
+enable loopback-mode vlan NET-2
+create vlan "NET-3"
+enable loopback-mode vlan NET-3
+create vlan "stub-vlan"
+configure vlan stub-vlan tag 1111
+configure vlan Default add ports 1-5 untagged
+configure vlan stub-vlan add ports 1 tagged
+configure vlan LOOPBACK ipaddress 6.6.6.6 255.255.255.255
+enable ipforwarding vlan LOOPBACK
+configure vlan NET-1 ipaddress 6.6.1.1 255.255.255.0
+enable ipforwarding vlan NET-1
+configure vlan NET-2 ipaddress 6.6.2.1 255.255.255.0
+enable ipforwarding vlan NET-2
+configure vlan NET-3 ipaddress 6.6.3.1 255.255.255.0
+enable ipforwarding vlan NET-3
+configure vlan stub-vlan ipaddress 16.16.16.2 255.255.255.252
+enable ipforwarding vlan stub-vlan
+configure qosscheduler strict-priority ports 1
+configure qosscheduler strict-priority ports 2
+configure qosscheduler strict-priority ports 3
+configure qosscheduler strict-priority ports 4
+configure qosscheduler strict-priority ports 5
+
+# Module ospf configuration.
+#
+configure ospf routerid 6.6.6.6
+enable ospf
+create ospf area 0.0.0.1
+configure ospf area 0.0.0.1 stub summary stub-default-cost 10
+configure ospf add vlan LOOPBACK area 0.0.0.1 passive
+configure ospf add vlan NET-1 area 0.0.0.1 passive
+configure ospf add vlan NET-2 area 0.0.0.1 passive
+configure ospf add vlan NET-3 area 0.0.0.1 passive
+configure ospf add vlan stub-vlan area 0.0.0.1 link-type point-to-point
+
+
