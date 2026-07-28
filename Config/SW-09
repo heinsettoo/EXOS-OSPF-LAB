@@ -1,0 +1,48 @@
+
+SW-09
+#
+# Module vlan configuration.
+#
+configure vlan default delete ports all
+configure vr VR-Default delete ports 1-9
+create qosprofile "QP2"
+create qosprofile "QP3"
+create qosprofile "QP4"
+create qosprofile "QP5"
+create qosprofile "QP6"
+create qosprofile "QP7"
+create vlan "NET-1"
+enable loopback-mode vlan NET-1
+create vlan "NET-2"
+enable loopback-mode vlan NET-2
+create vlan "NET-3"
+enable loopback-mode vlan NET-3
+create vlan "vlan-89"
+configure vlan vlan-89 tag 89
+configure vlan vlan-89 add ports 1 tagged
+configure vlan NET-1 ipaddress 9.9.1.1 255.255.255.0
+enable ipforwarding vlan NET-1
+configure vlan NET-2 ipaddress 9.9.2.1 255.255.255.0
+enable ipforwarding vlan NET-2
+configure vlan NET-3 ipaddress 9.9.3.1 255.255.255.0
+enable ipforwarding vlan NET-3
+configure vlan vlan-89 ipaddress 89.89.89.2 255.255.255.252
+enable ipforwarding vlan vlan-89
+configure qosscheduler strict-priority ports 1
+configure qosscheduler strict-priority ports 2
+configure qosscheduler strict-priority ports 3
+configure qosscheduler strict-priority ports 4
+configure qosscheduler strict-priority ports 5
+configure qosscheduler strict-priority ports 6
+configure qosscheduler strict-priority ports 7
+configure qosscheduler strict-priority ports 8
+configure qosscheduler strict-priority ports 9
+
+configure iproute add default 89.89.89.1
+
+enable rip
+configure rip add vlan NET-1
+configure rip add vlan NET-2
+configure rip add vlan NET-3
+configure rip add vlan vlan-89
+configure rip vlan vlan-89 rxmode v2only
