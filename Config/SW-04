@@ -1,0 +1,51 @@
+#EVOS-SW-02
+configure snmp sysName "EXOS-SW-04"
+configure sys-recovery-level switch reset
+
+#
+# Module vlan configuration.
+#
+configure vlan default delete ports all
+configure vr VR-Default delete ports 1-5
+create qosprofile "QP2"
+create qosprofile "QP3"
+create qosprofile "QP4"
+create qosprofile "QP5"
+create qosprofile "QP6"
+create qosprofile "QP7"
+create vlan "LOOPBACK"
+enable loopback-mode vlan LOOPBACK
+create vlan "vlan-14"
+configure vlan vlan-14 tag 14
+create vlan "vlan-34"
+configure vlan vlan-34 tag 34
+create vlan "vlan-45"
+configure vlan vlan-45 tag 45
+configure vlan Default add ports 1,3-5 untagged
+configure vlan vlan-14 add ports 1 tagged
+configure vlan vlan-34 add ports 2 tagged
+configure vlan vlan-45 add ports 3 tagged
+configure vlan LOOPBACK ipaddress 4.4.4.4 255.255.255.255
+enable ipforwarding vlan LOOPBACK
+configure vlan vlan-14 ipaddress 14.14.14.2 255.255.255.252
+enable ipforwarding vlan vlan-14
+configure vlan vlan-34 ipaddress 34.34.34.2 255.255.255.252
+enable ipforwarding vlan vlan-34
+configure vlan vlan-45 ipaddress 45.45.45.1 255.255.255.252
+enable ipforwarding vlan vlan-45
+configure qosscheduler strict-priority ports 1
+configure qosscheduler strict-priority ports 2
+configure qosscheduler strict-priority ports 3
+configure qosscheduler strict-priority ports 4
+configure qosscheduler strict-priority ports 5
+
+# Module ospf configuration.
+#
+configure ospf routerid 4.4.4.4
+enable ospf
+create ospf area 0.0.0.2
+configure ospf add virtual-link 5.5.5.5 0.0.0.2
+configure ospf add vlan LOOPBACK area 0.0.0.0 passive
+configure ospf add vlan vlan-14 area 0.0.0.0 link-type point-to-point
+configure ospf add vlan vlan-34 area 0.0.0.0 link-type point-to-point
+configure ospf add vlan vlan-45 area 0.0.0.2 link-type point-to-point
