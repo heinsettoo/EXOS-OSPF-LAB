@@ -1,0 +1,49 @@
+SW-11
+configure sys-recovery-level switch reset
+
+#
+# Module vlan configuration.
+#
+configure vlan default delete ports all
+configure vr VR-Default delete ports 1-9
+
+create vlan "LOOPBACK"
+enable loopback-mode vlan LOOPBACK
+create vlan "OSPF-LOOPBACK"
+enable loopback-mode vlan OSPF-LOOPBACK
+create vlan "vlan-110"
+configure vlan vlan-110 tag 110
+create vlan "vlan311"
+configure vlan vlan311 tag 311
+configure vlan Default add ports 1-9 untagged
+configure vlan vlan-110 add ports 2 tagged
+configure vlan vlan311 add ports 1 tagged
+configure vlan LOOPBACK ipaddress 11.11.11.11 255.255.255.255
+enable ipforwarding vlan LOOPBACK
+configure vlan OSPF-LOOPBACK ipaddress 11.11.11.1 255.255.255.255
+enable ipforwarding vlan OSPF-LOOPBACK
+configure vlan vlan-110 ipaddress 111.111.111.1 255.255.255.252
+enable ipforwarding vlan vlan-110
+configure vlan vlan311 ipaddress 31.31.31.2 255.255.255.252
+enable ipforwarding vlan vlan311
+
+# Module isis configuration.
+#
+create isis area CORE
+configure isis area CORE system-id 0000.0000.0002
+configure isis area CORE is-type level 2
+configure isis add vlan LOOPBACK area CORE
+configure isis add vlan vlan-110 area CORE
+configure isis area CORE add area-address 49.0001
+enable isis area CORE
+
+# Module ospf configuration.
+#
+configure ospf routerid 11.11.11.1
+enable ospf
+enable ospf export direct direct-to-ospf
+enable ospf export isis-level-2 isis-to-ospf
+create ospf area 0.0.0.5
+configure ospf area 0.0.0.5 nssa nosummary stub-default-cost 10
+configure ospf add vlan OSPF-LOOPBACK area 0.0.0.5 passive
+configure ospf add vlan vlan311 area 0.0.0.5 link-type point-to-point
