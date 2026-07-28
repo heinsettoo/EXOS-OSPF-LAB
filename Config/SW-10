@@ -1,0 +1,50 @@
+SW-10
+configure snmp sysName "SW-10"
+configure sys-recovery-level switch reset
+
+#
+# Module vlan configuration.
+#
+configure vlan default delete ports all
+configure vr VR-Default delete ports 1-9
+create qosprofile "QP2"
+create qosprofile "QP3"
+create qosprofile "QP4"
+create qosprofile "QP5"
+create qosprofile "QP6"
+create qosprofile "QP7"
+create vlan "LOOPBACK"
+enable loopback-mode vlan LOOPBACK
+create vlan "NET-1"
+enable loopback-mode vlan NET-1
+create vlan "NET-2"
+enable loopback-mode vlan NET-2
+create vlan "NET-3"
+enable loopback-mode vlan NET-3
+create vlan "vlan-110"
+configure vlan vlan-110 tag 110
+configure vlan Default add ports 1-9 untagged
+configure vlan vlan-110 add ports 1 tagged
+configure vlan LOOPBACK ipaddress 10.10.10.10 255.255.255.255
+enable ipforwarding vlan LOOPBACK
+configure vlan NET-1 ipaddress 10.10.1.1 255.255.255.0
+enable ipforwarding vlan NET-1
+configure vlan NET-2 ipaddress 10.10.2.1 255.255.255.0
+enable ipforwarding vlan NET-2
+configure vlan NET-3 ipaddress 10.10.3.1 255.255.255.0
+enable ipforwarding vlan NET-3
+configure vlan vlan-110 ipaddress 111.111.111.2 255.255.255.252
+enable ipforwarding vlan vlan-110
+
+configure iproute add default 111.111.111.1
+
+create isis area CORE
+configure isis area CORE system-id 0000.0000.0003
+configure isis area CORE is-type level 2
+configure isis add vlan LOOPBACK area CORE
+configure isis add vlan NET-1 area CORE
+configure isis add vlan NET-2 area CORE
+configure isis add vlan NET-3 area CORE
+configure isis add vlan vlan-110 area CORE
+configure isis area CORE add area-address 49.0001
+enable isis area CORE
