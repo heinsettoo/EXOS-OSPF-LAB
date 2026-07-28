@@ -1,0 +1,56 @@
+
+SW-08
+configure vlan default delete ports all
+configure vr VR-Default delete ports 1-5
+create qosprofile "QP2"
+create qosprofile "QP3"
+create qosprofile "QP4"
+create qosprofile "QP5"
+create qosprofile "QP6"
+create qosprofile "QP7"
+create vlan "LOOPBACK"
+enable loopback-mode vlan LOOPBACK
+create vlan "NET-1"
+enable loopback-mode vlan NET-1
+create vlan "NET-2"
+enable loopback-mode vlan NET-2
+create vlan "NET-3"
+enable loopback-mode vlan NET-3
+create vlan "vlan-28"
+configure vlan vlan-28 tag 28
+create vlan "vlan-89"
+configure vlan vlan-89 tag 89
+configure vlan Default add ports 2-5 untagged
+configure vlan vlan-28 add ports 1 tagged
+configure vlan vlan-89 add ports 2 tagged
+configure vlan LOOPBACK ipaddress 8.8.8.8 255.255.255.255
+enable ipforwarding vlan LOOPBACK
+configure vlan NET-1 ipaddress 8.8.1.1 255.255.255.0
+enable ipforwarding vlan NET-1
+configure vlan NET-2 ipaddress 8.8.2.1 255.255.255.0
+enable ipforwarding vlan NET-2
+configure vlan NET-3 ipaddress 8.8.3.1 255.255.255.0
+enable ipforwarding vlan NET-3
+configure vlan vlan-28 ipaddress 28.28.28.2 255.255.255.252
+enable ipforwarding vlan vlan-28
+configure vlan vlan-89 ipaddress 89.89.89.1 255.255.255.252
+enable ipforwarding vlan vlan-89
+configure qosscheduler strict-priority ports 1
+configure qosscheduler strict-priority ports 2
+configure qosscheduler strict-priority ports 3
+configure qosscheduler strict-priority ports 4
+configure qosscheduler strict-priority ports 5
+
+# Module ospf configuration.
+#
+configure ospf routerid 8.8.8.8
+enable ospf
+enable ospf export direct direct-to-ospf
+enable ospf export rip rip-to-ospf
+create ospf area 0.0.0.3
+configure ospf area 0.0.0.3 nssa nosummary stub-default-cost 10
+configure ospf add vlan LOOPBACK area 0.0.0.3 passive
+configure ospf add vlan NET-1 area 0.0.0.3 passive
+configure ospf add vlan NET-2 area 0.0.0.3 passive
+configure ospf add vlan NET-3 area 0.0.0.3 passive
+configure ospf add vlan vlan-28 area 0.0.0.3 link-type point-to-point
