@@ -1,0 +1,37 @@
+SW-12
+# Module devmgr configuration.
+#
+configure snmp sysName "EXOS-SW-12"
+configure sys-recovery-level switch reset
+
+#
+# Module vlan configuration.
+#
+configure vlan default delete ports all
+configure vr VR-Default delete ports 1-9
+create qosprofile "QP2"
+create qosprofile "QP3"
+create qosprofile "QP4"
+create qosprofile "QP5"
+create qosprofile "QP6"
+create qosprofile "QP7"
+create vlan "LOOPBACK"
+create vlan "vlan-52"
+configure vlan vlan-52 tag 52
+configure vlan Default add ports 1-9 untagged
+configure vlan vlan-52 add ports 1 tagged
+configure vlan LOOPBACK ipaddress 12.12.12.12 255.255.255.255
+enable ipforwarding vlan LOOPBACK
+configure vlan vlan-52 ipaddress 52.52.52.2 255.255.255.252
+enable ipforwarding vlan vlan-52
+configure qosscheduler strict-priority ports 1
+configure qosscheduler strict-priority ports 2
+configure qosscheduler strict-priority ports 3
+configure qosscheduler strict-priority ports 4
+configure qosscheduler strict-priority ports 5
+configure qosscheduler strict-priority ports 6
+configure qosscheduler strict-priority ports 7
+configure qosscheduler strict-priority ports 8
+configure qosscheduler strict-priority ports 9
+
+
