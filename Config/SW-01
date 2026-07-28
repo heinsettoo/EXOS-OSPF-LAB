@@ -1,4 +1,4 @@
-#EVOS-SW-01
+SW-01
 configure snmp sysName "EXOS-SW-01"
 configure sys-recovery-level switch reset
 
