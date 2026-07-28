@@ -1,0 +1,50 @@
+SW-02
+configure snmp sysName "SW-2"
+configure sys-recovery-level switch reset
+
+#
+# Module vlan configuration.
+#
+configure vlan default delete ports all
+configure vr VR-Default delete ports 1-5
+create qosprofile "QP2"
+create qosprofile "QP3"
+create qosprofile "QP4"
+create qosprofile "QP5"
+create qosprofile "QP6"
+create qosprofile "QP7"
+create vlan "LOOPBACK"
+enable loopback-mode vlan LOOPBACK
+create vlan "vlan-12"
+configure vlan vlan-12 tag 12
+create vlan "vlan-23"
+configure vlan vlan-23 tag 23
+create vlan "vlan-28"
+configure vlan vlan-28 tag 28
+configure vlan Default add ports 3-5 untagged
+configure vlan vlan-12 add ports 1 tagged
+configure vlan vlan-23 add ports 2 tagged
+configure vlan vlan-28 add ports 3 tagged
+configure vlan LOOPBACK ipaddress 2.2.2.2 255.255.255.255
+enable ipforwarding vlan LOOPBACK
+configure vlan vlan-12 ipaddress 12.12.12.2 255.255.255.252
+enable ipforwarding vlan vlan-12
+configure vlan vlan-23 ipaddress 23.23.23.1 255.255.255.252
+enable ipforwarding vlan vlan-23
+configure vlan vlan-28 ipaddress 28.28.28.1 255.255.255.252
+enable ipforwarding vlan vlan-28
+configure qosscheduler strict-priority ports 1
+configure qosscheduler strict-priority ports 2
+configure qosscheduler strict-priority ports 3
+configure qosscheduler strict-priority ports 4
+configure qosscheduler strict-priority ports 5
+
+configure ospf routerid 2.2.2.2
+enable ospf
+create ospf area 0.0.0.3
+configure ospf area 0.0.0.3 nssa summary stub-default-cost 10
+configure ospf add vlan LOOPBACK area 0.0.0.0 passive
+configure ospf add vlan vlan-12 area 0.0.0.0 link-type point-to-point
+configure ospf add vlan vlan-23 area 0.0.0.0 link-type point-to-point
+configure ospf add vlan vlan-28 area 0.0.0.3 link-type point-to-point
+
