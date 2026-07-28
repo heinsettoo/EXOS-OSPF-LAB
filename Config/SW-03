@@ -1,0 +1,59 @@
+SW-03
+configure snmp sysName "SW-3"
+configure sys-recovery-level switch reset
+
+#
+# Module vlan configuration.
+#
+configure vlan default delete ports all
+configure vr VR-Default delete ports 1-5
+create qosprofile "QP2"
+create qosprofile "QP3"
+create qosprofile "QP4"
+create qosprofile "QP5"
+create qosprofile "QP6"
+create qosprofile "QP7"
+create vlan "LOOPBACK"
+enable loopback-mode vlan LOOPBACK
+create vlan "vlan-23"
+configure vlan vlan-23 tag 23
+create vlan "vlan-34"
+configure vlan vlan-34 tag 34
+create vlan "vlan-37"
+configure vlan vlan-37 tag 37
+create vlan "vlan311"
+configure vlan vlan311 tag 311
+configure vlan Default add ports 3-5 untagged
+configure vlan vlan-23 add ports 1 tagged
+configure vlan vlan-34 add ports 2 tagged
+configure vlan vlan-37 add ports 3 tagged
+configure vlan vlan311 add ports 4 tagged
+configure vlan LOOPBACK ipaddress 3.3.3.3 255.255.255.255
+enable ipforwarding vlan LOOPBACK
+configure vlan vlan-23 ipaddress 23.23.23.2 255.255.255.252
+enable ipforwarding vlan vlan-23
+configure vlan vlan-34 ipaddress 34.34.34.1 255.255.255.252
+enable ipforwarding vlan vlan-34
+configure vlan vlan-37 ipaddress 37.37.37.1 255.255.255.252
+enable ipforwarding vlan vlan-37
+configure vlan vlan311 ipaddress 31.31.31.1 255.255.255.252
+enable ipforwarding vlan vlan311
+configure qosscheduler strict-priority ports 1
+configure qosscheduler strict-priority ports 2
+configure qosscheduler strict-priority ports 3
+configure qosscheduler strict-priority ports 4
+configure qosscheduler strict-priority ports 5
+
+# Module ospf configuration.
+#
+configure ospf routerid 3.3.3.3
+enable ospf
+create ospf area 0.0.0.4
+configure ospf area 0.0.0.4 stub nosummary stub-default-cost 10
+create ospf area 0.0.0.5
+configure ospf area 0.0.0.5 nssa nosummary stub-default-cost 10
+configure ospf add vlan LOOPBACK area 0.0.0.0 passive
+configure ospf add vlan vlan-23 area 0.0.0.0 link-type point-to-point
+configure ospf add vlan vlan-34 area 0.0.0.0 link-type point-to-point
+configure ospf add vlan vlan-37 area 0.0.0.4 link-type point-to-point
+configure ospf add vlan vlan311 area 0.0.0.5 link-type point-to-point
